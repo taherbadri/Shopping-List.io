@@ -3,6 +3,8 @@ const itemInput = document.getElementById("item-input");
 const qtyInput = document.getElementById("qty-input");
 const addItem = document.querySelector(".add-item");
 const list = document.querySelector(".item-list");
+const clearBtn = document.querySelector(".clear");
+const filter = document.querySelector("#filter");
 
 // Create delete icon
 const createIcon = (classes) => {
@@ -15,7 +17,7 @@ const createIcon = (classes) => {
 const createDelete = (classes) => {
 	const deleteBtn = document.createElement("button");
 	deleteBtn.className = classes;
-	deleteBtn.appendChild(createIcon("bi bi-x"));
+	deleteBtn.appendChild(createIcon("bi bi-x remove-item"));
 	return deleteBtn;
 };
 
@@ -30,7 +32,7 @@ const createLi = (classes) => {
 	li.className = classes;
 	li.appendChild(itemName);
 	li.appendChild(itemqty);
-	li.appendChild(createDelete("btn btn-link text-danger p-0"));
+	li.appendChild(createDelete("btn btn-link text-danger p-0 remove-item"));
 	return li;
 };
 
@@ -46,7 +48,43 @@ const addItems = (e) => {
 				"list-group-item d-flex justify-content-between rounded text-bg-light border m-2"
 			)
 		);
+		itemInput.value = "";
+		qtyInput.value = "";
+		hide();
+	}
+};
+
+// Remove Single Item Function
+const removeItem = (e) => {
+	if (confirm("Do you wish to delete this item?")) {
+		if (e.target.classList.contains("remove-item")) {
+			e.target.parentNode.parentNode.remove();
+			hide();
+		}
+	}
+};
+
+const removeAll = () => {
+	if (confirm(`Do you want to Delete all items ?`)) {
+		while (list.firstChild) {
+			list.removeChild(list.firstChild);
+			hide();
+		}
+	}
+};
+
+const hide = () => {
+	const items = list.querySelectorAll("li");
+	if (items.length === 0) {
+		clearBtn.style.display = "none";
+		filter.style.display = "none";
+	} else {
+		clearBtn.style.display = "block";
+		filter.style.display = "block";
 	}
 };
 
 form.addEventListener("submit", addItems);
+list.addEventListener("click", removeItem);
+clearBtn.addEventListener("click", removeAll);
+hide();

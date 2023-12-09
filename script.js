@@ -136,9 +136,9 @@ const addItems = (e) => {
 	console.log(unit);
 	addToList(`${item} ${qty} ${unit}`);
 	addItemsToStorage(`${item} ${qty} ${unit}`);
-	item = "";
-	qty = "";
-	unit = "0";
+	itemInput.value = "";
+	qtyInput.value = "";
+	unitSelector.value = "0";
 	hide();
 };
 

@@ -94,8 +94,10 @@ const addItems = (e) => {
 		removeFromLocal(itemToEdit.textContent);
 		itemToEdit.classList.remove("shadow");
 		itemToEdit.remove();
-		addToList(`${itemToEdit.textContent}`);
-		addItemsToStorage(`${itemToEdit.textContent}`);
+		const editInput = document.querySelector(".edit-item");
+		console.log(editInput, editInput.value);
+		addToList(`${editInput.value}`);
+		addItemsToStorage(`${editInput.value}`);
 		reset();
 		return;
 	} else {
@@ -135,8 +137,6 @@ const editInput = (itemValue) => {
 	label.appendChild(input);
 	console.log(label);
 	inputContainer.innerHTML = label.innerHTML;
-	console.log("working");
-	return input;
 };
 
 // edit item

@@ -2,6 +2,7 @@ const form = document.querySelector(".submit-form");
 const inputContainer = document.querySelector(".input-container");
 const itemInput = document.getElementById("item-input");
 const qtyInput = document.getElementById("qty-input");
+const unitSelector = document.querySelector("#unit-selector");
 const addItem = document.querySelector(".add-item");
 const list = document.querySelector(".item-list");
 const clearBtn = document.querySelector(".clear");
@@ -68,9 +69,24 @@ const reset = () => {
 	type="text" class="form-control" name="item"
 	id="item-input" placeholder="Enter Item"></label>
 <label for="qty-input" class="form-label w-50"> <input
-	type="text" class="form-control"
+	type="number" max="100" min="1"
+	class="form-control"
 	name="quantity" id="qty-input"
-	placeholder="Enter Quantity"></label>`;
+	placeholder="Enter Qty"></label>
+<label for="unit-selector" class="form-label w-50">
+<select
+	class="form-control"
+	name="unit" id="unit-selector"><option value="0"
+		selected>Select unit</option>
+	<option value="kg">kg</option>
+	<option value="g">gm</option>
+	<option value="l">lt</option>
+	<option value="ml">ml</option>
+	<option value="doz">doz</option>
+	<option value="pkt">pkt</option>
+	<option value="pcs">pcs</option>
+</select>
+</label>`;
 	addItem.classList.replace("btn-success", "btn-dark");
 	addItem.querySelector("span").classList.replace("bi-pen", "bi-plus");
 	addItem.lastChild.textContent = " Add Item";
@@ -85,9 +101,10 @@ const doesExist = (item) => {
 
 const addItems = (e) => {
 	e.preventDefault();
-	const item =
+	let item =
 		itemInput.value.slice(0, 1).toUpperCase() + itemInput.value.slice(1);
-	const qty = qtyInput.value;
+	let qty = qtyInput.value;
+	let unit = unitSelector.value;
 	// check for edit mode
 	if (editMode) {
 		const itemToEdit = list.querySelector(".shadow");
@@ -101,7 +118,7 @@ const addItems = (e) => {
 		reset();
 		return;
 	} else {
-		if (doesExist(`${item} ${qty}`)) {
+		if (doesExist(`${item} ${qty} ${unit}`)) {
 			alert("That item already Exists!");
 			return;
 		}
@@ -112,12 +129,16 @@ const addItems = (e) => {
 	} else if (qty === "") {
 		alert("Please add appropriate Quantity");
 		return;
+	} else if (unit === "0") {
+		alert("Please specify unit of item");
+		return;
 	}
-
-	addToList(`${item} ${qty}`);
-	addItemsToStorage(`${item} ${qty}`);
-	itemInput.value = "";
-	qtyInput.value = "";
+	console.log(unit);
+	addToList(`${item} ${qty} ${unit}`);
+	addItemsToStorage(`${item} ${qty} ${unit}`);
+	item = "";
+	qty = "";
+	unit = "0";
 	hide();
 };
 

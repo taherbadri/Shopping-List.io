@@ -21,7 +21,7 @@
                 List</h1>
             <div class="row">
                 <form action class="mt-3 col-lg-6 m-auto submit-form">
-                    <div class="hstack gap-1">
+                    <div class="hstack gap-1 input-container">
                         <label for="item-input" class="form-label w-50"> <input
                                 type="text" class="form-control" name="item"
                                 id="item-input" placeholder="Enter Item"></label>
@@ -30,8 +30,9 @@
                                 name="quantity" id="qty-input"
                                 placeholder="Enter Quantity"></label>
                     </div>
-                    <input type="submit" value="+ Add item"
-                        class="btn btn-dark mt-3 add-item">
+                    <button type="submit"
+                        class="btn btn-dark mt-3 add-item"><span
+                            class="bi bi-plus"></span> Add Item</button>
                 </form>
             </div>
             <div class="mt-3 col-lg-6 m-auto">

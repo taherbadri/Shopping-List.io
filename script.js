@@ -1,10 +1,12 @@
 const form = document.querySelector(".submit-form");
+const inputContainer = document.querySelector(".input-container");
 const itemInput = document.getElementById("item-input");
 const qtyInput = document.getElementById("qty-input");
 const addItem = document.querySelector(".add-item");
 const list = document.querySelector(".item-list");
 const clearBtn = document.querySelector(".clear");
 const filter = document.querySelector("#filter");
+let editMode = false;
 
 // get items from local
 const getFromLocal = () => {
@@ -60,22 +62,61 @@ const displayItems = (e) => {
 	hide();
 };
 
+// reset the previous input tag and button styling
+const reset = () => {
+	inputContainer.innerHTML = `<label for="item-input" class="form-label w-50"> <input
+	type="text" class="form-control" name="item"
+	id="item-input" placeholder="Enter Item"></label>
+<label for="qty-input" class="form-label w-50"> <input
+	type="text" class="form-control"
+	name="quantity" id="qty-input"
+	placeholder="Enter Quantity"></label>`;
+	addItem.classList.replace("btn-success", "btn-dark");
+	addItem.querySelector("span").classList.replace("bi-pen", "bi-plus");
+	addItem.lastChild.textContent = " Add Item";
+	editMode = false;
+};
+
+// check if the item already exists in the storage and list
+const doesExist = (item) => {
+	const itemFromStorage = getFromLocal();
+	return itemFromStorage.includes(item);
+};
+
 const addItems = (e) => {
 	e.preventDefault();
 	const item =
 		itemInput.value.slice(0, 1).toUpperCase() + itemInput.value.slice(1);
 	const qty = qtyInput.value;
+	// check for edit mode
+	if (editMode) {
+		const itemToEdit = list.querySelector(".shadow");
+		removeFromLocal(itemToEdit.textContent);
+		itemToEdit.classList.remove("shadow");
+		itemToEdit.remove();
+		addToList(`${itemToEdit.textContent}`);
+		addItemsToStorage(`${itemToEdit.textContent}`);
+		reset();
+		return;
+	} else {
+		if (doesExist(`${item} ${qty}`)) {
+			alert("That item already Exists!");
+			return;
+		}
+	}
 	if (item === "") {
 		alert("Please add an item");
+		return;
 	} else if (qty === "") {
 		alert("Please add appropriate Quantity");
-	} else {
-		addToList(`${item} ${qty}`);
-		addItemsToStorage(`${item} ${qty}`);
-		itemInput.value = "";
-		qtyInput.value = "";
-		hide();
+		return;
 	}
+
+	addToList(`${item} ${qty}`);
+	addItemsToStorage(`${item} ${qty}`);
+	itemInput.value = "";
+	qtyInput.value = "";
+	hide();
 };
 
 // remove from local storage
@@ -84,10 +125,37 @@ const removeFromLocal = (itemTextQty) => {
 	itemFromStorage = itemFromStorage.filter((item) => item !== itemTextQty);
 	localStorage.setItem("items", JSON.stringify(itemFromStorage));
 };
+
+const editInput = (itemValue) => {
+	const label = document.createElement("label");
+	label.className = "form-label w-100";
+	const input = document.createElement("input");
+	input.className = "form-control edit-item";
+	input.setAttribute("value", itemValue);
+	label.appendChild(input);
+	console.log(label);
+	inputContainer.innerHTML = label.innerHTML;
+	console.log("working");
+	return input;
+};
+
+// edit item
+const editItem = (item) => {
+	editMode = true;
+	list.querySelectorAll("li").forEach((li) => li.classList.remove("shadow"));
+	item.classList.add("shadow");
+	addItem.classList.replace("btn-dark", "btn-success");
+	addItem.querySelector("span").classList.replace("bi-plus", "bi-pen");
+	addItem.lastChild.textContent = " Replace item";
+	editInput(item.textContent);
+};
+
 // on item click
 const onItemClick = (e) => {
 	if (e.target.classList.contains("remove-item")) {
 		removeItem(e.target.parentNode.parentNode);
+	} else {
+		editItem(e.target);
 	}
 };
 
@@ -126,11 +194,9 @@ const filterItems = (e) => {
 	items.forEach((currentItem) => {
 		const text = currentItem.textContent.toLowerCase();
 		if (text.indexOf(filter.value.toLowerCase()) != -1) {
-			currentItem.classList.remove("d-none");
-			currentItem.classList.add("d-flex");
+			currentItem.classList.replace("d-none", "d-flex");
 		} else {
-			currentItem.classList.add("d-none");
-			currentItem.classList.remove("d-flex");
+			currentItem.classList.replace("d-flex", "d-none");
 		}
 	});
 };
